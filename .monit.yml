@@ -1,0 +1,13 @@
+targets:
+  - name: go test
+    path: .
+    commands:
+      - [go, test, -cover, -v, ./...]
+    extensions:
+      - go
+  - name: echo test
+    path: .
+    commands:
+      - [echo, unko]
+    extensions:
+      - yml

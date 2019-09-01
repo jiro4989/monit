@@ -1,8 +1,0 @@
-targets:
-  - name: go test
-    path: .
-    commands:
-      - echo start
-      - echo end
-    extensions:
-      - puml

@@ -18,7 +18,8 @@ type (
 		Commands   []string
 		Extensions []string
 	}
-	Monitrc struct {
+	Config struct {
+		Sleep   int
 		Targets []Target
 	}
 )
@@ -32,14 +33,14 @@ func init() {
 }
 
 func main() {
-	var monitrc Monitrc
+	var config Config
 
 	b, err := ioutil.ReadFile(".monit.yml")
 	if err != nil {
 		panic(err)
 	}
 
-	if err := yaml.Unmarshal(b, &monitrc); err != nil {
+	if err := yaml.Unmarshal(b, &config); err != nil {
 		panic(err)
 	}
 
@@ -48,7 +49,7 @@ func main() {
 		i++
 		fmt.Println(fmt.Sprintf("** %d回目 **", i))
 
-		for _, target := range monitrc.Targets {
+		for _, target := range config.Targets {
 			fmt.Println("[suite] " + target.Name)
 
 			files, err := ioutil.ReadDir(target.Path)
@@ -98,6 +99,6 @@ func main() {
 				}
 			}
 		}
-		time.Sleep(5 * time.Second)
+		time.Sleep(time.Duration(config.Sleep) * time.Second)
 	}
 }

@@ -15,7 +15,7 @@ type (
 	Target struct {
 		Name       string
 		Path       string
-		Commands   [][]string
+		Commands   []string
 		Extensions []string
 	}
 	Monitrc struct {
@@ -93,7 +93,7 @@ func main() {
 				targets[fullPath] = t
 				for _, cmd := range target.Commands {
 					// エラーが発生しても継続してほしいので無視
-					out, _ := exec.Command(cmd[0], cmd[1:]...).CombinedOutput()
+					out, _ := exec.Command("bash", "-c", cmd).CombinedOutput()
 					fmt.Println(string(out))
 				}
 			}

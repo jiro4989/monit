@@ -2,12 +2,12 @@ targets:
   - name: go test
     path: .
     commands:
-      - [go, test, -cover, -v, ./...]
+      - go test -v -cover ./...
     extensions:
       - go
   - name: echo test
     path: .
     commands:
-      - [echo, unko]
+      - echo unko
     extensions:
       - yml

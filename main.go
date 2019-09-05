@@ -25,6 +25,26 @@ type (
 	}
 )
 
+const (
+	doc = `monit はファイル変更監視をしてタスクを実行するコマンドです。
+
+Usage:
+	saubcal [options] <ip>...
+	saubcal -h | --help
+	saubcal -v | --version
+
+Options:
+	-h --help                     Print this help.
+	-v --version                  Print version.
+	-d --delimiter=<DELIMITER>    Set field delimiter. [default:  ]
+	-C --color                    Colorize IP address bin.
+	-i --ipv4                     Print IPv4 address.
+	-c --cidr                     Print CIDR.
+	-b --bin                      Print IP address bin.
+	-m --mask                     Print Subnet mask.
+	-n --no-header                Hide header.`
+)
+
 var (
 	targets map[string]time.Time
 )

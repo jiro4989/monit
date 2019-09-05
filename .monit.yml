@@ -11,5 +11,5 @@ targets:
     path: .
     commands:
       - echo unko
-    extensions:
-      - yml
+    exclude_extensions:
+      - md

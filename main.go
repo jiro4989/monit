@@ -13,10 +13,11 @@ import (
 
 type (
 	Target struct {
-		Name       string
-		Path       string
-		Commands   []string
-		Extensions []string
+		Name              string
+		Path              string
+		Commands          []string
+		Extensions        []string
+		ExcludeExtensions []string
 	}
 	Config struct {
 		Sleep   int
@@ -61,7 +62,12 @@ func main() {
 				fullPath := filepath.Join(target.Path, f.Name())
 				var defaultTime time.Time
 
-				// 拡張子にマッチするかの判定
+				// 除外拡張子のファイルはスキップ
+				if isExcludeFile(fullPath, target.ExcludeExtensions) {
+					continue
+				}
+
+				// 拡張子にマッチしないものはスキップ
 				if !matchExt(fullPath, target.Extensions) {
 					continue
 				}
@@ -99,20 +105,38 @@ func matchExt(name string, exts []string) bool {
 		return false
 	}
 
-	var found bool
-	for _, ext := range exts {
-		// Goが返す拡張子には . が先頭に含まれるので除外
-		e := filepath.Ext(name)
-		if len(e) < 1 {
-			break
-		}
-		if e[1:] == ext {
-			found = true
-			break
-		}
-	}
-	if !found {
+	// Goが返す拡張子には . が先頭に含まれるので除外
+	e := filepath.Ext(name)
+	if len(e) < 1 {
 		return false
 	}
-	return true
+	for _, ext := range exts {
+		if e[1:] == ext {
+			return true
+		}
+	}
+
+	return false
+}
+
+func isExcludeFile(name string, exts []string) bool {
+	if name == "" {
+		return true
+	}
+	if len(exts) < 1 {
+		return false
+	}
+
+	// Goが返す拡張子には . が先頭に含まれるので除外
+	e := filepath.Ext(name)
+	if len(e) < 1 {
+		return true
+	}
+
+	for _, ext := range exts {
+		if e[1:] == ext {
+			return true
+		}
+	}
+	return false
 }

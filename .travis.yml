@@ -1,0 +1,26 @@
+language: go
+
+env:
+  global:
+    - GO111MODULE=on
+
+script:
+  - go version
+  - make build
+  - make test
+
+before_deploy:
+  - make archive
+
+deploy:
+  provider: releases
+  api_key:
+    secure: none
+  keep-history: false
+  skip_cleanup: true
+  file:
+    - 'dist/*.tar.gz'
+    - 'dist/*.zip'
+  file_glob: true
+  on:
+    tags: true

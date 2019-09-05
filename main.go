@@ -62,19 +62,7 @@ func main() {
 				var defaultTime time.Time
 
 				// 拡張子にマッチするかの判定
-				var found bool
-				for _, ext := range target.Extensions {
-					// Goが返す拡張子には . が先頭に含まれるので除外
-					e := filepath.Ext(fullPath)
-					if len(e) < 1 {
-						break
-					}
-					if e[1:] == ext {
-						found = true
-						break
-					}
-				}
-				if !found {
+				if !matchExt(fullPath, target.Extensions) {
 					continue
 				}
 
@@ -101,4 +89,30 @@ func main() {
 		}
 		time.Sleep(time.Duration(config.Sleep) * time.Second)
 	}
+}
+
+func matchExt(name string, exts []string) bool {
+	if len(exts) < 1 {
+		return true
+	}
+	if name == "" {
+		return false
+	}
+
+	var found bool
+	for _, ext := range exts {
+		// Goが返す拡張子には . が先頭に含まれるので除外
+		e := filepath.Ext(name)
+		if len(e) < 1 {
+			break
+		}
+		if e[1:] == ext {
+			found = true
+			break
+		}
+	}
+	if !found {
+		return false
+	}
+	return true
 }

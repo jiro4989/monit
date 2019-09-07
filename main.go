@@ -4,10 +4,12 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"time"
 
+	"github.com/docopt/docopt-go"
 	"gopkg.in/yaml.v2"
 )
 
@@ -19,30 +21,46 @@ type (
 		Extensions        []string
 		ExcludeExtensions []string
 	}
-	Config struct {
+	MonitorConfig struct {
 		Sleep   int
 		Targets []Target
 	}
+	AppConfig struct {
+		Command   string
+		Target    string
+		LoopCount int
+		File      string
+		Verbose   bool
+	}
+	ErrorCode int
 )
 
 const (
 	doc = `monit はファイル変更監視をしてタスクを実行するコマンドです。
 
 Usage:
-	saubcal [options] <ip>...
+	saubcal <command> [options]
 	saubcal -h | --help
 	saubcal -v | --version
+
+Available commands:
+	init
+	run <target>
 
 Options:
 	-h --help                     Print this help.
 	-v --version                  Print version.
-	-d --delimiter=<DELIMITER>    Set field delimiter. [default:  ]
-	-C --color                    Colorize IP address bin.
-	-i --ipv4                     Print IPv4 address.
-	-c --cidr                     Print CIDR.
-	-b --bin                      Print IP address bin.
-	-m --mask                     Print Subnet mask.
-	-n --no-header                Hide header.`
+	-c --loop-count=<COUNT>       Count of monitoring. [default: -1]
+	-f --file=<CONFIG_FILE>       Config file of monitoring. [default: .monit.yml]
+	-x --verbose                  Print debug log.`
+)
+
+const (
+	errorCodeOK ErrorCode = iota
+	errorCodeFailedBinding
+	errorCodeCouldNotReadFile
+	errorCodeIllegalMonitorConfig
+	errorCodeCouldNotReadDir
 )
 
 var (
@@ -54,32 +72,56 @@ func init() {
 }
 
 func main() {
-	var config Config
+	os.Exit(int(Main(os.Args)))
+}
 
-	b, err := ioutil.ReadFile(".monit.yml")
+func Main(argv []string) ErrorCode {
+	parser := &docopt.Parser{}
+	args, _ := parser.ParseArgs(doc, argv[1:], Version)
+	config := AppConfig{}
+	if err := args.Bind(&config); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return errorCodeFailedBinding
+	}
+
+	debug := func(msg interface{}) {
+		if config.Verbose {
+			fmt.Println(msg)
+		}
+	}
+
+	debug(config)
+	var monitorConfig MonitorConfig
+	b, err := ioutil.ReadFile(config.File)
 	if err != nil {
-		panic(err)
+		return errorCodeCouldNotReadFile
 	}
 
-	if err := yaml.Unmarshal(b, &config); err != nil {
-		panic(err)
+	if err := yaml.Unmarshal(b, &monitorConfig); err != nil {
+		return errorCodeIllegalMonitorConfig
 	}
+	debug(monitorConfig)
 
-	var i int
+	var loopCount int
 	for {
-		i++
-		fmt.Println(fmt.Sprintf("** %d回目 **", i))
+		if 0 < config.LoopCount && config.LoopCount <= loopCount {
+			break
+		}
 
-		for _, target := range config.Targets {
-			fmt.Println("[suite] " + target.Name)
+		if 0 < config.LoopCount {
+			loopCount++
+		}
 
+		debug("LoopCount: start " + string(loopCount))
+		for _, target := range monitorConfig.Targets {
 			files, err := ioutil.ReadDir(target.Path)
 			if err != nil {
-				panic(err)
+				return errorCodeCouldNotReadDir
 			}
 
 			for _, f := range files {
 				fullPath := filepath.Join(target.Path, f.Name())
+				debug("TargetFile: " + fullPath)
 				var defaultTime time.Time
 
 				// 除外拡張子のファイルはスキップ
@@ -92,6 +134,8 @@ func main() {
 					continue
 				}
 
+				debug("TargetFile: pass - " + fullPath)
+
 				t := f.ModTime()
 				// ゼロ値が返却されたら初めてチェックしたとみなす
 				if targets[fullPath] == defaultTime {
@@ -100,21 +144,23 @@ func main() {
 				}
 				// 時間が一致するので変更なし
 				if targets[fullPath] == t {
-					fmt.Println(fmt.Sprintf("%s was not changed.", fullPath))
 					continue
 				}
 
-				fmt.Println(fmt.Sprintf("%s was changed.", fullPath))
 				targets[fullPath] = t
 				for _, cmd := range target.Commands {
+					debug(fmt.Sprintf(`exec: "%s"`, cmd))
 					// エラーが発生しても継続してほしいので無視
 					out, _ := exec.Command("bash", "-c", cmd).CombinedOutput()
 					fmt.Println(string(out))
 				}
 			}
 		}
-		time.Sleep(time.Duration(config.Sleep) * time.Second)
+		debug("LoopCount: end " + string(loopCount))
+		time.Sleep(time.Duration(monitorConfig.Sleep) * time.Second)
 	}
+
+	return errorCodeOK
 }
 
 func matchExt(name string, exts []string) bool {

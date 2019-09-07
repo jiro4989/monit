@@ -4,6 +4,8 @@ github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815 h1:bWDMxwH3px2JBh
 github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815/go.mod h1:WwZ+bS3ebgob9U8Nd0kOddGdZWjyMGR8Wziv+TBNwSE=
 github.com/fatih/color v1.7.0 h1:DkWD4oS2D8LGGgTQ6IvwJJXSL5Vp2ffcQg58nFV38Ys=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
+github.com/jiro4989/ponpe v0.0.0-20190906120756-69e1639fbdcb h1:JgO9NeTWONnEUU88NGNOfIosau4wC9MFFfcZV9Qk3ao=
+github.com/jiro4989/ponpe v0.0.0-20190906120756-69e1639fbdcb/go.mod h1:kSl1pjeZJBYO9/3dMNU8LkKzl/v3JdHKy2jXf1NCLfY=
 github.com/jiro4989/subcal v1.1.0 h1:h9CTuDC4EKVjIMnydMbvCA6Z8RhPprKugtcFwpiIbBk=
 github.com/jiro4989/subcal v1.1.0/go.mod h1:iVFLaxZNxu0RZWqbdhTn5EcEeENANi7xF4qE4fZhrkg=
 github.com/mattn/go-colorable v0.1.2 h1:/bC9yWikZXAL9uJdulbSfyVNIR3n3trXl+v8+1sx8mU=

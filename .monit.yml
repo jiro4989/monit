@@ -1,15 +1,15 @@
 sleep: 1
 
 targets:
-  - name: go test
-    path: .
+  - name: nimble test
+    path: src
     commands:
-      - go test -v -cover ./...
+      - nimble test
     extensions:
-      - go
+      - .nim
   - name: echo test
-    path: .
+    path: src
     commands:
       - echo unko
     exclude_extensions:
-      - md
+      - .md

@@ -1,5 +1,5 @@
 import yaml
-import logging, streams, os, times, tables, osproc
+import logging, streams, os, times, tables, osproc, terminal, times, strutils
 from strformat import `&`
 
 type
@@ -29,11 +29,20 @@ const
 
 proc runCommands(commands: openArray[string], dryRun: bool) =
   for cmd in commands:
-    debug &"cmd:{cmd}"
+    let t0 = epochTime()
+
+    # Execute command
+    styledEcho fgBlue, "[Command] ", resetStyle, styleBright, cmd, resetStyle
     if dryRun:
-      echo "== DRY RUN =="
+      styledEcho fgGreen, "== DRY RUN ==", resetStyle
     else:
-      echo execProcess(cmd)
+      discard execCmd(cmd)
+
+    let elapsed = epochTime() - t0
+    let elapsedStr = elapsed.formatFloat(format = ffDecimal, precision = 3)
+    let diff = "(" & elapsedStr & " s)"
+    styledEcho fgBlue, "[Processing time] ", resetStyle, styleBright, diff, resetStyle
+    echo ""
 
 proc isExecTargetFile(path: string, target: Target): bool =
   ## Returns `path` is exec target file.

@@ -1,17 +1,18 @@
+%YAML 1.2
+%TAG !n! tag:nimyaml.org,2016:
+--- !n!custom:MonitorConfig 
 sleep: 1
-
-targets:
-  - name: nimble test
-    path: src
-    commands:
-      - nimble test
-    extensions:
-      - .nim
-    once: true
-  - name: echo test
-    path: src
-    commands:
-      - echo unko
-    exclude_extensions:
-      - .md
-    once: true
+targets: 
+  - 
+    name: Nimble test
+    path: .
+    commands: [nimble test]
+    extensions: [nim]
+    exclude_extensions: [md]
+    once: y
+  - 
+    name: Echo test
+    path: .
+    commands: [echo test]
+    extensions: [md]
+    once: y

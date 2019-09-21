@@ -1,4 +1,3 @@
-# comment
 import yaml
 import logging, streams, os, times, tables, osproc
 from strformat import `&`
@@ -33,7 +32,27 @@ proc runCommands(commands: openArray[string], dryRun: bool) =
       echo execProcess(cmd)
 
 proc init(): int =
-  discard
+  if existsFile(defaultConfigFile):
+    echo &"{defaultConfigFile} existed"
+    return 0
+
+  let conf = MonitorConfig(
+    sleep: 1,
+    targets: @[
+      Target(
+        name: "Task name",
+        path: ".",
+        commands: @["nimble test"],
+        extensions: @["nim"],
+        exclude_extensions: @["md"],
+        once: true,
+        ),
+      ],
+    )
+  var s = newFileStream(defaultConfigFile, fmWrite)
+  defer: s.close()
+  dump(conf, s)
+  echo &"Generated {defaultConfigFile}"
 
 proc run(loopCount = -1, file = defaultConfigFile, verbose = false,
          dryRun = false): int =

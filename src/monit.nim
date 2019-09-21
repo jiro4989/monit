@@ -35,6 +35,19 @@ proc runCommands(commands: openArray[string], dryRun: bool) =
     else:
       echo execProcess(cmd)
 
+proc isExecTargetFile(path: string, target: Target): bool =
+  let (dir, name, ext) = path.splitFile
+  let basename = &"{name}{ext}"
+  if basename in target.files:
+    return true
+  if basename in target.exclude_files:
+    return false
+  if ext in target.extensions:
+    return true
+  if ext in target.exclude_extensions:
+    return false
+  return false
+
 proc init(): int =
   addHandler(newConsoleLogger(lvlInfo, fmtStr = verboseFmtStr, useStderr = true))
 
@@ -107,16 +120,7 @@ proc run(loopCount = -1, file = defaultConfigFile, verbose = false,
             debug &"TargetFile:{f}"
 
             # ファイル拡張子とファイル名をチェック
-            let (dir, name, ext) = f.splitFile
-            debug &"ext:{ext}"
-            if ext in target.exclude_extensions:
-              continue
-            if ext notin target.extensions:
-              continue
-            let basename = &"{name}{ext}"
-            if basename in target.exclude_files:
-              continue
-            if basename notin target.files:
+            if not f.isExecTargetFile(target):
               continue
 
             # ファイルの更新時間のチェック
@@ -136,7 +140,7 @@ proc run(loopCount = -1, file = defaultConfigFile, verbose = false,
   discard tryRemoveFile(stopTriggerFile)
   info "End to monitor"
 
-when isMainModule:
+when isMainModule and not defined(isTesting):
   import cligen
   clCfg.version = version
   dispatchMulti([init], [run])

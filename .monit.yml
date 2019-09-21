@@ -7,9 +7,11 @@ targets:
       - nimble test
     extensions:
       - .nim
+    once: true
   - name: echo test
     path: src
     commands:
       - echo unko
     exclude_extensions:
       - .md
+    once: true

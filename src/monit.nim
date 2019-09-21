@@ -10,15 +10,25 @@ type
     commands: seq[string]
     extensions: seq[string]
     exclude_extensions: seq[string]
+    once: bool
   MonitorConfig = object
     sleep: int
     targets: seq[Target]
 
 Target.setDefaultValue(extensions, @[])
 Target.setDefaultValue(exclude_extensions, @[])
+Target.setDefaultValue(once, true)
 
 const
   version = "0.0.1"
+
+proc runCommands(commands: openArray[string], dryRun: bool) =
+  for cmd in commands:
+    debug &"cmd:{cmd}"
+    if dryRun:
+      echo "== DRY RUN =="
+    else:
+      echo execProcess(cmd)
 
 proc init(): int =
   discard
@@ -34,6 +44,11 @@ proc run(loopCount = -1, file = ".monit.yml", verbose = false, dryRun = false): 
   defer: strm.close()
   strm.load(conf)
   debug &"MonitorConfig:{conf}"
+
+  # 一度は最低実行するオプションが有効のときは実行
+  for target in conf.targets:
+    if target.once:
+      runCommands(target.commands, dryRun)
 
   # ファイル変更の監視を開始
   # 無限ループ
@@ -66,12 +81,7 @@ proc run(loopCount = -1, file = ".monit.yml", verbose = false, dryRun = false): 
           continue
 
         targets[f] = modTime
-        for cmd in target.commands:
-          debug &"cmd:{cmd}"
-          if dryRun:
-            echo "== DRY RUN =="
-          else:
-            echo execProcess(cmd)
+        runCommands(target.commands, dryRun)
         break
     sleep conf.sleep * 1000
 

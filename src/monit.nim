@@ -50,6 +50,8 @@ proc isExecTargetFile(path: string, target: Target): bool =
   return false
 
 proc init(): int =
+  ## Generate monit config file to current directory.
+  ## If config file has existed then no generating.
   addHandler(newConsoleLogger(lvlInfo, fmtStr = verboseFmtStr, useStderr = true))
 
   if existsFile(defaultConfigFile):
@@ -75,6 +77,7 @@ proc init(): int =
 
 proc run(loopCount = -1, file = defaultConfigFile, verbose = false,
          dryRun = false): int =
+  ## Run commands on the commands of `file` when file modified.
   let level =
     if verbose: lvlAll
     else: lvlInfo
@@ -84,13 +87,13 @@ proc run(loopCount = -1, file = defaultConfigFile, verbose = false,
     error &"{file} doesn't exist"
     return 1
 
-  # Ctrl-Cで終了する時にエラー扱いにしない
+  # No error occurs when press Ctrl-C
   proc quitAction() {.noconv.} =
     quit 0
   setControlCHook(quitAction)
   debug &"loopCount:{loopCount}, file:{file}, verbose:{verbose}"
 
-  # yamlファイルをconfオブジェクトにマッピング
+  # Bind yaml to object
   var conf: MonitorConfig
   var strm = newFileStream(file)
   defer: strm.close()
@@ -98,13 +101,12 @@ proc run(loopCount = -1, file = defaultConfigFile, verbose = false,
   debug &"MonitorConfig:{conf}"
   info "Start to monitor"
 
-  # 一度は最低実行するオプションが有効のときは実行
+  # Run each commands once when `once` flag was true
   for target in conf.targets:
     if target.once:
       runCommands(target.commands, dryRun)
 
-  # ファイル変更の監視を開始
-  # 無限ループ
+  # Starts to monitor modified timestamp of files
   var currentLoopCount: int
   var targets: Table[string, Time]
   while not (0 < loopCount and loopCount <= currentLoopCount) and
@@ -120,18 +122,17 @@ proc run(loopCount = -1, file = defaultConfigFile, verbose = false,
           for f in walkDirRec(path):
             debug &"TargetFile:{f}"
 
-            # ファイル拡張子とファイル名をチェック
             if not f.isExecTargetFile(target):
               continue
 
-            # ファイルの更新時間のチェック
+            # Check time diff of files
             let modTime = getFileInfo(f).lastWriteTime
             if not targets.hasKey(f):
-              debug "初めてのファイル参照のためスキップ"
+              debug &"Skip {f} because of first checking"
               targets[f] = modTime
               continue
             if targets[f] == modTime:
-              debug "ファイル変更なしのためスキップ"
+              debug &"Skip {f} because of the file has not modified"
               continue
 
             targets[f] = modTime

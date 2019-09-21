@@ -35,14 +35,15 @@ proc runCommands(commands: openArray[string], dryRun: bool) =
 proc init(): int =
   discard
 
-proc run(loopCount = -1, file = defaultConfigFile, verbose = false, dryRun = false): int =
+proc run(loopCount = -1, file = defaultConfigFile, verbose = false,
+         dryRun = false): int =
   # Ctrl-Cで終了する時にエラー扱いにしない
   proc quitAction() {.noconv.} =
     quit 0
   setControlCHook(quitAction)
 
   if verbose:
-    addHandler(newConsoleLogger(fmtStr=verboseFmtStr, useStderr=true))
+    addHandler(newConsoleLogger(fmtStr = verboseFmtStr, useStderr = true))
   debug &"loopCount:{loopCount}, file:{file}, verbose:{verbose}"
 
   # yamlファイルをconfオブジェクトにマッピング

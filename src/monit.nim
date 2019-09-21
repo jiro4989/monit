@@ -21,6 +21,8 @@ Target.setDefaultValue(once, true)
 
 const
   version = "0.0.1"
+  defaultConfigFile = ".monit.yml"
+  stopTriggerFile = ".monit.stop"
 
 proc runCommands(commands: openArray[string], dryRun: bool) =
   for cmd in commands:
@@ -33,7 +35,7 @@ proc runCommands(commands: openArray[string], dryRun: bool) =
 proc init(): int =
   discard
 
-proc run(loopCount = -1, file = ".monit.yml", verbose = false, dryRun = false): int =
+proc run(loopCount = -1, file = defaultConfigFile, verbose = false, dryRun = false): int =
   # Ctrl-Cで終了する時にエラー扱いにしない
   proc quitAction() {.noconv.} =
     quit 0
@@ -59,7 +61,8 @@ proc run(loopCount = -1, file = ".monit.yml", verbose = false, dryRun = false): 
   # 無限ループ
   var currentLoopCount: int
   var targets: Table[string, Time]
-  while not (0 < loopCount and loopCount <= currentLoopCount):
+  while not (0 < loopCount and loopCount <= currentLoopCount) and
+        not existsFile(stopTriggerFile):
     debug &"currentLoopCount:{currentLoopCount}, loopCount:{loopCount}"
     if 0 < loopCount:
       inc(currentLoopCount)
@@ -89,6 +92,7 @@ proc run(loopCount = -1, file = ".monit.yml", verbose = false, dryRun = false): 
         runCommands(target.commands, dryRun)
         break
     sleep conf.sleep * 1000
+  discard tryRemoveFile(stopTriggerFile)
 
 when isMainModule:
   import cligen

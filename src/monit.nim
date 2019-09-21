@@ -36,8 +36,10 @@ proc runCommands(commands: openArray[string], dryRun: bool) =
       echo execProcess(cmd)
 
 proc init(): int =
+  addHandler(newConsoleLogger(lvlInfo, fmtStr = verboseFmtStr, useStderr = true))
+
   if existsFile(defaultConfigFile):
-    echo &"{defaultConfigFile} existed"
+    info &"{defaultConfigFile} existed"
     return 0
 
   let conf = MonitorConfig(
@@ -55,17 +57,23 @@ proc init(): int =
   var s = newFileStream(defaultConfigFile, fmWrite)
   defer: s.close()
   dump(conf, s)
-  echo &"Generated {defaultConfigFile}"
+  info &"Generated {defaultConfigFile}"
 
 proc run(loopCount = -1, file = defaultConfigFile, verbose = false,
          dryRun = false): int =
+  let level =
+    if verbose: lvlAll
+    else: lvlInfo
+  addHandler(newConsoleLogger(level, fmtStr = verboseFmtStr, useStderr = true))
+
+  if not existsFile(file):
+    error &"{file} doesn't exist"
+    return 1
+
   # Ctrl-Cで終了する時にエラー扱いにしない
   proc quitAction() {.noconv.} =
     quit 0
   setControlCHook(quitAction)
-
-  if verbose:
-    addHandler(newConsoleLogger(fmtStr = verboseFmtStr, useStderr = true))
   debug &"loopCount:{loopCount}, file:{file}, verbose:{verbose}"
 
   # yamlファイルをconfオブジェクトにマッピング
@@ -74,6 +82,7 @@ proc run(loopCount = -1, file = defaultConfigFile, verbose = false,
   defer: strm.close()
   strm.load(conf)
   debug &"MonitorConfig:{conf}"
+  info "Start to monitor"
 
   # 一度は最低実行するオプションが有効のときは実行
   for target in conf.targets:
@@ -125,6 +134,7 @@ proc run(loopCount = -1, file = defaultConfigFile, verbose = false,
             break targetBlock
     sleep conf.sleep * 1000
   discard tryRemoveFile(stopTriggerFile)
+  info "End to monitor"
 
 when isMainModule:
   import cligen

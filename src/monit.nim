@@ -34,6 +34,11 @@ proc init(): int =
   discard
 
 proc run(loopCount = -1, file = ".monit.yml", verbose = false, dryRun = false): int =
+  # Ctrl-Cで終了する時にエラー扱いにしない
+  proc quitAction() {.noconv.} =
+    quit 0
+  setControlCHook(quitAction)
+
   if verbose:
     addHandler(newConsoleLogger(fmtStr=verboseFmtStr, useStderr=true))
   debug &"loopCount:{loopCount}, file:{file}, verbose:{verbose}"

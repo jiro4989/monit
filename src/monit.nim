@@ -36,6 +36,7 @@ proc runCommands(commands: openArray[string], dryRun: bool) =
       echo execProcess(cmd)
 
 proc isExecTargetFile(path: string, target: Target): bool =
+  ## Returns `path` is exec target file.
   let (dir, name, ext) = path.splitFile
   let basename = &"{name}{ext}"
   if basename in target.files:
@@ -62,7 +63,7 @@ proc init(): int =
         name: "Task name",
         paths: @["src", "tests"],
         commands: @["nimble test"],
-        extensions: @["nim"],
+        extensions: @[".nim"],
         once: true,
     ),
   ],

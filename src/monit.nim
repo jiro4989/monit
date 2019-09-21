@@ -68,7 +68,10 @@ proc run(loopCount = -1, file = ".monit.yml", verbose = false, dryRun = false): 
         targets[f] = modTime
         for cmd in target.commands:
           debug &"cmd:{cmd}"
-          echo execProcess(cmd)
+          if dryRun:
+            echo "== DRY RUN =="
+          else:
+            echo execProcess(cmd)
         break
     sleep conf.sleep * 1000
 

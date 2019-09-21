@@ -64,7 +64,7 @@ proc init(): int =
       Target(
         name: "Task name",
         paths: @["src", "tests"],
-        commands: @["nimble test"],
+        commands: @["nimble build", "nimble test"],
         extensions: @[".nim"],
         once: true,
     ),

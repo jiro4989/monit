@@ -49,8 +49,8 @@ proc init(): int =
         commands: @["nimble test"],
         extensions: @["nim"],
         once: true,
-        ),
-      ],
+    ),
+  ],
     )
   var s = newFileStream(defaultConfigFile, fmWrite)
   defer: s.close()

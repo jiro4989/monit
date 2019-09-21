@@ -4,15 +4,11 @@
 sleep: 1
 targets: 
   - 
-    name: Nimble test
-    path: .
+    name: Task name
+    paths: [src, tests]
     commands: [nimble test]
     extensions: [nim]
-    exclude_extensions: [md]
-    once: y
-  - 
-    name: Echo test
-    path: .
-    commands: [echo test]
-    extensions: [md]
+    files: []
+    exclude_extensions: []
+    exclude_files: []
     once: y

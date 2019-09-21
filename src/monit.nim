@@ -5,17 +5,21 @@ from strformat import `&`
 type
   Target = object
     name: string
-    path: string
+    paths: seq[string]
     commands: seq[string]
     extensions: seq[string]
+    files: seq[string]
     exclude_extensions: seq[string]
+    exclude_files: seq[string]
     once: bool
   MonitorConfig = object
     sleep: int
     targets: seq[Target]
 
 Target.setDefaultValue(extensions, @[])
+Target.setDefaultValue(files, @[])
 Target.setDefaultValue(exclude_extensions, @[])
+Target.setDefaultValue(exclude_files, @[])
 Target.setDefaultValue(once, true)
 
 const
@@ -41,10 +45,9 @@ proc init(): int =
     targets: @[
       Target(
         name: "Task name",
-        path: ".",
+        paths: @["src", "tests"],
         commands: @["nimble test"],
         extensions: @["nim"],
-        exclude_extensions: @["md"],
         once: true,
         ),
       ],
@@ -87,30 +90,39 @@ proc run(loopCount = -1, file = defaultConfigFile, verbose = false,
     if 0 < loopCount:
       inc(currentLoopCount)
     for target in conf.targets:
-      for f in walkDirRec(target.path):
-        debug &"TargetFile:{f}"
+      block targetBlock:
+        for path in target.paths:
+          if not existsDir(path):
+            continue
+          for f in walkDirRec(path):
+            debug &"TargetFile:{f}"
 
-        # ファイル拡張子をチェック
-        let ext = f.splitFile.ext
-        debug &"ext:{ext}"
-        if ext in target.exclude_extensions:
-          continue
-        if ext notin target.extensions:
-          continue
+            # ファイル拡張子とファイル名をチェック
+            let (dir, name, ext) = f.splitFile
+            debug &"ext:{ext}"
+            if ext in target.exclude_extensions:
+              continue
+            if ext notin target.extensions:
+              continue
+            let basename = &"{name}{ext}"
+            if basename in target.exclude_files:
+              continue
+            if basename notin target.files:
+              continue
 
-        # ファイルの更新時間のチェック
-        let modTime = getFileInfo(f).lastWriteTime
-        if not targets.hasKey(f):
-          debug "初めてのファイル参照のためスキップ"
-          targets[f] = modTime
-          continue
-        if targets[f] == modTime:
-          debug "ファイル変更なしのためスキップ"
-          continue
+            # ファイルの更新時間のチェック
+            let modTime = getFileInfo(f).lastWriteTime
+            if not targets.hasKey(f):
+              debug "初めてのファイル参照のためスキップ"
+              targets[f] = modTime
+              continue
+            if targets[f] == modTime:
+              debug "ファイル変更なしのためスキップ"
+              continue
 
-        targets[f] = modTime
-        runCommands(target.commands, dryRun)
-        break
+            targets[f] = modTime
+            runCommands(target.commands, dryRun)
+            break targetBlock
     sleep conf.sleep * 1000
   discard tryRemoveFile(stopTriggerFile)
 

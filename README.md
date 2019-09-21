@@ -42,7 +42,29 @@ nimble install monit
 
 ## Help
 
-TODO
+    % monit help
+    This is a multiple-dispatch command.  Top-level --help/--help-syntax
+    is also available.  Usage is like:
+        monit {SUBCMD} [subcommand-opts & args]
+    where subcommand syntaxes are as follows:
+
+      init [optional-params] 
+        Generate monit config file to current directory. If config file has existed then no generating.
+      Options(opt-arg sep :|=|spc):
+          -h, --help                  print this cligen-erated help
+          --help-syntax               advanced: prepend,plurals,..
+          --version      bool  false  print version
+
+      run [optional-params] 
+        Run commands on the commands of `file` when file modified.
+      Options(opt-arg sep :|=|spc):
+          -h, --help                               print this cligen-erated help
+          --help-syntax                            advanced: prepend,plurals,..
+          --version          bool    false         print version
+          -l=, --loopCount=  int     -1            set loopCount
+          -f=, --file=       string  ".monit.yml"  A task definition file path
+          -v, --verbose      bool    false         Turn ON the debug logging
+          -d, --dryRun       bool    false         Not execute commands
 
 ## LICENSE
 

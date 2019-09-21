@@ -69,7 +69,7 @@ proc run(loopCount = -1, file = ".monit.yml", verbose = false, dryRun = false): 
         for cmd in target.commands:
           debug &"cmd:{cmd}"
           echo execProcess(cmd)
-    sleep 1000
+    sleep conf.sleep * 1000
 
 when isMainModule:
   import cligen

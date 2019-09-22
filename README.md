@@ -46,7 +46,7 @@ targets:
 
 A descriptions of these keys and values.
 
-* `sleep` - A interval to monitor files
+* `sleep` - A interval to monitor files (secconds)
 
 ### Targets
 

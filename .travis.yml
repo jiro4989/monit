@@ -39,11 +39,11 @@ before_deploy:
   - tar -C dist -czf ${APP_NAME}_${TRAVIS_OS_NAME}{.tar.gz,}
 
 deploy:
-  - provider: releases
-    api_key:
-      secure: notyet
-    keep-history: false
-    skip_cleanup: true
-    file: ${APP_NAME}_${TRAVIS_OS_NAME}.tar.gz
-    on:
-      tags: true
+  provider: releases
+  api_key:
+    secure: kM2dQ0mASWcArvLV4/nhiiVEPvp+Ikhfqq1q8mYduc1gA2HGuTsBjgiz0eiHYZ7T1TEVuOLzg66I6Rw3U3IsISDIfXVZ8Vs96ebhzmWq1K7EVvInxB9saPtY67J3DuWaBnY1CiziUpfhmFr0CqO+sAk3lkfIS+Qzp88NAdf0K4ISphyRf9xE1dC2JfH/h3UQ7sPttRm24eEB8VaVC23zsR5u1QVr3y1J4sS7tYdiwSljb5azA5gu/1N4aFLiDnKN7DejsbUUtOhxJ+rixJ4A4gAcpvSOMZemkLjnur01wwzy/wHnG1pY5EcEKShBy6kUxswBWFv0ynVvqCwiZPqj6f1bm+1sqT/G6tNlkVT9AtcnQOtkwDX/umjI78pN0+sihZulNBLPk0lEMyz8dS+TVEdOg299tkKdVJ7nFs3wLcvhffgUsvQeGhHIM5Fi3a+Ry78QZ2RTNIXJn4gFai6Ss3wbTqNcKVo8N5nvudnO4I7ZUCZ8F//QR3kMby8N2LZp8jsL1+XDukUF8KnmCUPkZtnHQuxcb7bHqy1mGDLgNKBfBjVgu2mqXUiQ3GDMEBnZN/84vSqDDaV6NbB3KiQWY+JvSdlW4eMFJgE4PUjkqnVS3DoGgpO8rhhJ8g+m/gAX3GU1AqTpKd1NLOm2lIYdQeY4seXMX1yMubpMKTYfo78=
+  keep-history: false
+  skip_cleanup: true
+  file: ${APP_NAME}_${TRAVIS_OS_NAME}.tar.gz
+  on:
+    tags: true

@@ -3,6 +3,8 @@
 `monit` is the simple task runner.
 Run tasks and watch file changes with custom paths.
 
+![monit](./doc/monit.gif)
+
 ## Usage
 
 `monit` run commands when files have changed.

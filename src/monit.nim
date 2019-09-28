@@ -23,7 +23,7 @@ Target.setDefaultValue(exclude_files, @[])
 Target.setDefaultValue(once, true)
 
 const
-  version = "1.0.0"
+  version = "1.1.0"
   defaultConfigFile = ".monit.yml"
   stopTriggerFile = ".monit.stop"
 

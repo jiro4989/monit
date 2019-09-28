@@ -27,22 +27,29 @@ const
   defaultConfigFile = ".monit.yml"
   stopTriggerFile = ".monit.stop"
 
+proc echoTask(bg: BackgroundColor, status, cmd: string) =
+  styledEcho fgBlack, bg, &" {status} ", resetStyle, styleBright, " ", cmd, resetStyle
+
 proc runCommands(commands: openArray[string], dryRun: bool) =
   for cmd in commands:
     let t0 = epochTime()
 
     # Execute command
-    styledEcho fgBlue, "[Command] ", resetStyle, styleBright, cmd, resetStyle
+    echoTask bgYellow, "[RUNNING]", cmd
+    cursorUp(stdout)
     if dryRun:
-      styledEcho fgGreen, "== DRY RUN ==", resetStyle
+      echoTask bgBlue, "[DRY RUN]", cmd
     else:
-      discard execCmd(cmd)
+      let (output, exitCode) = execCmdEx(cmd)
+      let elapsed = epochTime() - t0
+      let elapsedStr = elapsed.formatFloat(format = ffDecimal, precision = 3)
+      let diff = "(" & elapsedStr & " s)"
 
-    let elapsed = epochTime() - t0
-    let elapsedStr = elapsed.formatFloat(format = ffDecimal, precision = 3)
-    let diff = "(" & elapsedStr & " s)"
-    styledEcho fgBlue, "[Processing time] ", resetStyle, styleBright, diff, resetStyle
-    echo ""
+      if exitCode != 0:
+        echoTask bgRed, "[FAILED ]", &"{cmd} {diff}"
+        styledEcho output
+      else:
+        echoTask bgGreen, "[PASSED ]", &"{cmd} {diff}"
 
 proc isExecTargetFile(path: string, target: Target): bool =
   ## Returns `path` is exec target file.

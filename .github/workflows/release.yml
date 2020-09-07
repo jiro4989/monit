@@ -6,10 +6,10 @@ on:
       - 'v*.*.*'
 
 env:
-  APP_NAME: 'nimjson'
-  NIM_VERSION: '1.2.4'
+  APP_NAME: 'monit'
+  NIM_VERSION: '1.2.6'
   MAINTAINER: 'jiro4989'
-  DESC: 'nimjson generates nim object definitions from json documents.'
+  DESC: 'A simple task runner. Run tasks and watch file changes with custom paths.'
 
 jobs:
   build-artifact:

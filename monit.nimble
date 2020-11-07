@@ -10,9 +10,9 @@ binDir        = "bin"
 
 # Dependencies
 
-requires "nim >= 1.2.6"
-requires "yaml == 0.12.0"
-requires "cligen >= 0.9.32"
+requires "nim >= 1.4.0"
+requires "yaml#d173f2a7f6279bb8351d42a5e3a1e853f8623778"
+requires "cligen == 1.2.2"
 
 import strformat, os
 

@@ -16,12 +16,6 @@ type
     sleep: int
     targets: seq[Target]
 
-Target.setDefaultValue(extensions, @[])
-Target.setDefaultValue(files, @[])
-Target.setDefaultValue(exclude_extensions, @[])
-Target.setDefaultValue(exclude_files, @[])
-Target.setDefaultValue(once, true)
-
 const
   version = "1.1.0"
   defaultConfigFile = ".monit.yml"
@@ -101,7 +95,7 @@ proc run(loopCount = -1, file = defaultConfigFile, verbose = false,
   addHandler(newConsoleLogger(level, fmtStr = verboseFmtStr, useStderr = true))
 
   if not existsFile(file):
-    error &"{file} doesn't exist"
+    logging.error &"{file} doesn't exist"
     return 1
 
   # No error occurs when press Ctrl-C

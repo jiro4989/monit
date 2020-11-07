@@ -71,7 +71,7 @@ nimble install monit
 
 ## Development
 
-Nim 1.0.0
+Nim 1.4.0
 
 ## Help
 

@@ -38,7 +38,7 @@ jobs:
     strategy:
       matrix:
         nim-version:
-          - '1.2.6'
+          - '1.4.0'
           - 'stable'
     needs: before
     steps:

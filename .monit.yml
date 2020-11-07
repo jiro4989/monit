@@ -6,9 +6,7 @@ targets:
   - 
     name: Task name
     paths: [src, tests]
-    commands:
-      - nimble build --hints:off
-      - nimble test
+    commands: [nimble build, nimble test]
     extensions: [.nim]
     files: []
     exclude_extensions: []

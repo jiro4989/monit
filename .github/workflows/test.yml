@@ -2,7 +2,19 @@ name: test
 
 on:
   push:
+    paths-ignore:
+      - 'LICENSE'
+      - '*.md'
+      - '.gitignore'
+      - '.monit.yml'
+      - 'doc/*'
   pull_request:
+    paths-ignore:
+      - 'LICENSE'
+      - '*.md'
+      - '.gitignore'
+      - '.monit.yml'
+      - 'doc/*'
 
 jobs:
   skip:

@@ -17,7 +17,7 @@ type
     targets: seq[Target]
 
 const
-  version = "1.1.0"
+  version = "1.2.2"
   defaultConfigFile = ".monit.yml"
   stopTriggerFile = ".monit.stop"
 

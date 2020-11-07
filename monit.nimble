@@ -1,6 +1,6 @@
 # Package
 
-version       = "1.1.1"
+version       = "1.2.2"
 author        = "jiro4989"
 description   = "A simple task runner. Run tasks and watch file changes with custom paths."
 license       = "MIT"

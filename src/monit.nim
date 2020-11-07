@@ -65,7 +65,7 @@ proc init(): int =
   addHandler(newConsoleLogger(lvlInfo, fmtStr = verboseFmtStr,
       useStderr = true))
 
-  if existsFile(defaultConfigFile):
+  if fileExists(defaultConfigFile):
     info &"{defaultConfigFile} existed"
     return 0
 
@@ -94,7 +94,7 @@ proc run(loopCount = -1, file = defaultConfigFile, verbose = false,
     else: lvlInfo
   addHandler(newConsoleLogger(level, fmtStr = verboseFmtStr, useStderr = true))
 
-  if not existsFile(file):
+  if not fileExists(file):
     logging.error &"{file} doesn't exist"
     return 1
 
@@ -121,14 +121,14 @@ proc run(loopCount = -1, file = defaultConfigFile, verbose = false,
   var currentLoopCount: int
   var targets: Table[string, Time]
   while not (0 < loopCount and loopCount <= currentLoopCount) and
-        not existsFile(stopTriggerFile):
+        not fileExists(stopTriggerFile):
     debug &"currentLoopCount:{currentLoopCount}, loopCount:{loopCount}"
     if 0 < loopCount:
       inc(currentLoopCount)
     for target in conf.targets:
       block targetBlock:
         for path in target.paths:
-          if not existsDir(path):
+          if not dirExists(path):
             continue
           for f in walkDirRec(path):
             debug &"TargetFile:{f}"

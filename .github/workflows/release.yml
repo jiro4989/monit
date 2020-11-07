@@ -7,7 +7,7 @@ on:
 
 env:
   APP_NAME: 'monit'
-  NIM_VERSION: '1.2.6'
+  NIM_VERSION: '1.4.0'
   MAINTAINER: 'jiro4989'
   DESC: 'A simple task runner. Run tasks and watch file changes with custom paths.'
 
@@ -104,13 +104,15 @@ jobs:
       - build-linux-packages
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Generate changelog
-        run: |
-          wget https://github.com/git-chglog/git-chglog/releases/download/0.9.1/git-chglog_linux_amd64
-          chmod +x git-chglog_linux_amd64
-          mv git-chglog_linux_amd64 git-chglog
-          ./git-chglog --output ./changelog $(git describe --tags $(git rev-list --tags --max-count=1))
-
+        uses: scottbrenner/generate-changelog-action@1.0.2
+        id: changelog
+        env:
+          REPO: ${{ github.repository }}
+        with:
+          package-dir: '.github/package.json'
       - name: Create Release
         id: create-release
         uses: actions/create-release@v1
@@ -119,7 +121,8 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
-          body_path: ./changelog
+          body: |
+            ${{ steps.changelog.outputs.changelog }}
           draft: false
           prerelease: false
 

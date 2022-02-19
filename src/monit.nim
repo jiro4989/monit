@@ -59,7 +59,7 @@ proc isExecTargetFile(path: string, target: Target): bool =
     return false
   return false
 
-proc init(): int =
+proc cmdInit(): int =
   ## Generate monit config file to current directory.
   ## If config file has existed then no generating.
   addHandler(newConsoleLogger(lvlInfo, fmtStr = verboseFmtStr,
@@ -157,7 +157,7 @@ when isMainModule and not defined(isTesting):
   import cligen
   clCfg.version = version
   dispatchMulti(
-    [init],
+    [cmdInit, cmdName = "init"],
     [run, help = {
       "file": "A task definition file path",
       "verbose": "Turn ON the debug logging",

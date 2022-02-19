@@ -16,6 +16,9 @@ requires "cligen == 1.5.21"
 
 import strformat, os
 
+task tests, "Run tests":
+  exec "testament p 'tests/test_*.nim'"
+
 task checkFormat, "Checking that codes were formatted":
   var errCount = 0
   for f in listFiles("src"):
@@ -33,7 +36,7 @@ task ci, "Run CI":
   if buildOS == "linux":
     exec "nimble checkFormat"
   exec "nimble install -Y"
-  exec "nimble test -Y"
+  exec "nimble tests"
   exec "nimble build -d:release -Y"
   exec "./bin/monit help"
   exec "./bin/monit --version"

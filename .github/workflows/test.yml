@@ -30,8 +30,9 @@ jobs:
       - uses: jiro4989/setup-nim-action@v1
         with:
           nim-version: 'stable'
-      - run: nimble test -Y
       - run: nimble install -Y
+      - run: nimble build
+      - run: nimble tests
 
   test-version:
     runs-on: ubuntu-latest
@@ -47,5 +48,6 @@ jobs:
       - uses: jiro4989/setup-nim-action@v1
         with:
           nim-version: ${{ matrix.nim-version }}
-      - run: nimble test -Y
       - run: nimble install -Y
+      - run: nimble build
+      - run: nimble tests

@@ -1,7 +1,10 @@
+---
 name: test
 
-on:
+"on":
   push:
+    branches:
+      - master
     paths-ignore:
       - 'LICENSE'
       - '*.md'

@@ -1,6 +1,14 @@
+import std/logging
+import std/os
+import std/osproc
+import std/streams
+import std/strutils
+import std/tables
+import std/terminal
+import std/times
+from std/strformat import `&`
+
 import yaml
-import logging, streams, os, times, tables, osproc, terminal, times, strutils
-from strformat import `&`
 
 type
   Target = object
@@ -17,7 +25,7 @@ type
     targets: seq[Target]
 
 const
-  version = "1.2.2"
+  version = "1.2.3"
   defaultConfigFile = ".monit.yml"
   stopTriggerFile = ".monit.stop"
 
@@ -59,7 +67,7 @@ proc isExecTargetFile(path: string, target: Target): bool =
     return false
   return false
 
-proc init(): int =
+proc cmdInit(): int =
   ## Generate monit config file to current directory.
   ## If config file has existed then no generating.
   addHandler(newConsoleLogger(lvlInfo, fmtStr = verboseFmtStr,
@@ -157,7 +165,7 @@ when isMainModule and not defined(isTesting):
   import cligen
   clCfg.version = version
   dispatchMulti(
-    [init],
+    [cmdInit, cmdName = "init"],
     [run, help = {
       "file": "A task definition file path",
       "verbose": "Turn ON the debug logging",

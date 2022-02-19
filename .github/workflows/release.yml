@@ -106,13 +106,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Generate changelog
-        uses: scottbrenner/generate-changelog-action@1.0.2
-        id: changelog
-        env:
-          REPO: ${{ github.repository }}
-        with:
-          package-dir: '.github/package.json'
       - name: Create Release
         id: create-release
         uses: actions/create-release@v1
@@ -122,7 +115,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
           body: |
-            ${{ steps.changelog.outputs.changelog }}
+            ${{ github.ref }}
           draft: false
           prerelease: false
 

@@ -1,6 +1,14 @@
+import std/logging
+import std/os
+import std/osproc
+import std/streams
+import std/strutils
+import std/tables
+import std/terminal
+import std/times
+from std/strformat import `&`
+
 import yaml
-import logging, streams, os, times, tables, osproc, terminal, times, strutils
-from strformat import `&`
 
 type
   Target = object

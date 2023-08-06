@@ -12,7 +12,7 @@ binDir        = "bin"
 
 requires "nim >= 1.4.0"
 requires "yaml == 1.1.0"
-requires "cligen == 1.5.21"
+requires "cligen == 1.6.13"
 
 import strformat, os
 

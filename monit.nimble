@@ -1,6 +1,6 @@
 # Package
 
-version       = "1.2.3"
+version       = "1.3.0"
 author        = "jiro4989"
 description   = "A simple task runner. Run tasks and watch file changes with custom paths."
 license       = "MIT"
@@ -11,8 +11,8 @@ binDir        = "bin"
 # Dependencies
 
 requires "nim >= 1.4.0"
-requires "yaml == 0.16.0"
-requires "cligen == 1.5.21"
+requires "yaml == 1.1.0"
+requires "cligen == 1.6.13"
 
 import strformat, os
 

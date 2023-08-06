@@ -45,6 +45,7 @@ jobs:
           - '1.4.0'
           - '1.4.x'
           - '1.6.x'
+          - '2.0.x'
           - 'stable'
     steps:
       - uses: actions/checkout@v2

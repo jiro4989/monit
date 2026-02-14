@@ -25,6 +25,7 @@ jobs:
       - uses: jiro4989/setup-nim-action@v1
         with:
           nim-version: ${{ env.NIM_VERSION }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - run: nimble build -Y -d:release
       - name: Create artifact
         run: |
@@ -57,6 +58,7 @@ jobs:
       - uses: jiro4989/setup-nim-action@v1
         with:
           nim-version: ${{ env.NIM_VERSION }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - run: nimble build -Y -d:release
 
       - name: create sample script
